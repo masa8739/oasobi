@@ -2,8 +2,7 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0
-">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>カレンダーと時間割</title>
     <style>
         body {
@@ -173,12 +172,10 @@
         <div class="calendar">
             <div class="header">
                 <button id="prev">前月</button>
-                <div id="currentMonthYear" style="font-size: 24px;"></
-div>
+                <div id="currentMonthYear" style="font-size: 24px;"></div>
                 <button id="next">次月</button>
             </div>
-            <button id="toggleHolidays" style="margin: 10px;">祝日表示切
-り替え</button>
+            <button id="toggleHolidays" style="margin: 10px;">祝日表示切り替え</button>
             <div class="days">
                 <div class="sunday">日曜</div>
                 <div>月曜</div>
@@ -243,15 +240,12 @@ div>
                     <td></td>
                 </tr>
             </table>
-            <button class="button" id="addClassButton">講義を追加</
-button>
-            <button class="button" id="deleteClassButton">講義を削除</
-button>
+            <button class="button" id="addClassButton">講義を追加</button>
+            <button class="button" id="deleteClassButton">講義を削除</button>
 
             <div id="memoSection">
                 <h2>メモ</h2>
-                <textarea id="memo" placeholder="ここにメモを入力してく
-ださい..."></textarea>
+                <textarea id="memo" placeholder="ここにメモを入力してください..."></textarea>
             </div>
         </div>
     </div>
@@ -311,13 +305,11 @@ button>
 
     <script>
         // カレンダー関連のJavaScript
-        const currentMonthYear = document.getElementById('
-currentMonthYear');
+        const currentMonthYear = document.getElementById('currentMonthYear');
         const datesContainer = document.getElementById('dates');
         const prevButton = document.getElementById('prev');
         const nextButton = document.getElementById('next');
-        const toggleHolidaysButton = document.getElementById('
-toggleHolidays');
+        const toggleHolidaysButton = document.getElementById('toggleHolidays');
         let currentDate = new Date();
         let showHolidays = false;
 
@@ -342,8 +334,7 @@ toggleHolidays');
 
             for (let date = 1; date <= lastDate; date++) {
                 const dateButton = document.createElement('button');
-                const formattedDate = `${year}-${String(month + 1).
-padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
                 dateButton.textContent = date;
 
                 if (new Date(year, month, date).getDay() === 0) {
@@ -354,8 +345,7 @@ padStart(2, '0')}-${String(date).padStart(2, '0')}`;
 
                 if (showHolidays && holidays[formattedDate]) {
                     dateButton.classList.add('holiday');
-                    dateButton.textContent += ` (${holidays[
-formattedDate]})`;
+                    dateButton.textContent += ` (${holidays[formattedDate]})`;
                 }
 
                 datesContainer.appendChild(dateButton);
@@ -382,16 +372,12 @@ formattedDate]})`;
         // 時間割関連のJavaScript
         const timetable = document.getElementById('timetable');
         const addClassButton = document.getElementById('addClassButton');
-        const deleteClassButton = document.getElementById('
-deleteClassButton');
+        const deleteClassButton = document.getElementById('deleteClassButton');
         const addClassModal = document.getElementById('addClassModal');
-        const deleteClassModal = document.getElementById('
-deleteClassModal');
+        const deleteClassModal = document.getElementById('deleteClassModal');
         const closeButtons = document.querySelectorAll('.close');
-        const confirmAddClassButton = document.getElementById('
-confirmAddClassButton');
-        const confirmDeleteClassButton = document.getElementById('
-confirmDeleteClassButton');
+        const confirmAddClassButton = document.getElementById('confirmAddClassButton');
+        const confirmDeleteClassButton = document.getElementById('confirmDeleteClassButton');
         const memo = document.getElementById('memo');
 
         // ローカルストレージからデータを読み込み
@@ -399,8 +385,7 @@ confirmDeleteClassButton');
             for (let i = 1; i <= 5; i++) {
                 ['月', '火', '水', '木', '金'].forEach(day => {
                     const key = `${day}${i}`;
-                    const cell = document.querySelector(`#timetable td[
-data-key='${key}']`);
+                    const cell = document.querySelector(`#timetable td[data-key='${key}']`);
                     const storedValue = localStorage.getItem(key);
                     if (cell && storedValue) {
                         cell.innerHTML = storedValue;
@@ -415,8 +400,7 @@ data-key='${key}']`);
             for (let i = 1; i <= 5; i++) {
                 ['月', '火', '水', '木', '金'].forEach(day => {
                     const key = `${day}${i}`;
-                    const cell = document.querySelector(`#timetable td[
-data-key='${key}']`);
+                    const cell = document.querySelector(`#timetable td[data-key='${key}']`);
                     if (cell) {
                         localStorage.setItem(key, cell.innerHTML);
                     }
@@ -433,11 +417,9 @@ data-key='${key}']`);
             const period = document.getElementById('period').value;
 
             if (className && weekday && period) {
-                const cell = timetable.querySelector(`td[data-key='${
-weekday}${period.charAt(0)}']`);
+                const cell = timetable.querySelector(`td[data-key='${weekday}${period.charAt(0)}']`);
                 if (cell) {
-                    cell.innerHTML = `<a href="${classUrl}" target="_
-blank">${className}</a>`;
+                    cell.innerHTML = `<a href="${classUrl}" target="_blank">${className}</a>`;
                     saveToLocalStorage();
                 }
                 addClassModal.style.display = 'none';
@@ -446,13 +428,10 @@ blank">${className}</a>`;
 
         // 講義の削除
         confirmDeleteClassButton.addEventListener('click', () => {
-            const weekday = document.getElementById('deleteClassWeekday')
-.value;
-            const period = document.getElementById('deleteClassPeriod').
-value;
+            const weekday = document.getElementById('deleteClassWeekday').value;
+            const period = document.getElementById('deleteClassPeriod').value;
 
-            const cell = timetable.querySelector(`td[data-key='${weekday}
-${period.charAt(0)}']`);
+            const cell = timetable.querySelector(`td[data-key='${weekday}${period.charAt(0)}']`);
             if (cell) {
                 cell.innerHTML = '';
                 saveToLocalStorage();
@@ -461,10 +440,8 @@ ${period.charAt(0)}']`);
         });
 
         // モーダルの表示と非表示の設定
-        addClassButton.onclick = () => addClassModal.style.display = '
-block';
-        deleteClassButton.onclick = () => deleteClassModal.style.display
-= 'block';
+        addClassButton.onclick = () => addClassModal.style.display = 'block';
+        deleteClassButton.onclick = () => deleteClassModal.style.display = 'block';
         closeButtons.forEach(button => button.onclick = () => {
             addClassModal.style.display = 'none';
             deleteClassModal.style.display = 'none';
@@ -478,3 +455,4 @@ block';
     </script>
 </body>
 </html>
+
