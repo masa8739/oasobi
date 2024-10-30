@@ -7,25 +7,15 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f0f0f0;
-            margin: 0;
-            padding: 20px;
+            background-color: #EEE;
         }
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            gap: 30px;
-            flex-wrap: wrap;
-        }
-        /* Calendar Styles */
         .calendar {
             width: 755px;
+            margin: 50px auto;
             background-color: #EEE;
             padding: 10px;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
         }
         .header {
             display: flex;
@@ -64,6 +54,12 @@
             text-align: left;
             padding: 10px;
             cursor: pointer;
+            transition: transform 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .dates button:hover {
+            transform: scale(1.05);
         }
         .sunday {
             color: red;
@@ -74,6 +70,43 @@
         .holiday {
             color: red;
         }
+        .today {
+            background-color: #FFEB3B;
+            font-weight: bold;
+            border: 2px solid #FFC107;
+            box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            width: 300px;
+            text-align: center;
+        }
+        .modal-content textarea, .modal-content input {
+            width: 100%;
+            margin-bottom: 10px;
+        }
+        .modal-content textarea {
+            height: 100px;
+        }
+        .modal-content button {
+            margin-top: 10px;
+        }
+    
 
         /* Timetable Styles */
         .timetable-container {
@@ -170,23 +203,34 @@
     <div class="container">
         <!-- Calendar Section -->
         <div class="calendar">
-            <div class="header">
-                <button id="prev">前月</button>
-                <div id="currentMonthYear" style="font-size: 24px;"></div>
-                <button id="next">次月</button>
-            </div>
-            <button id="toggleHolidays" style="margin: 10px;">祝日表示切り替え</button>
-            <div class="days">
-                <div class="sunday">日曜</div>
-                <div>月曜</div>
-                <div>火曜</div>
-                <div>水曜</div>
-                <div>木曜</div>
-                <div>金曜</div>
-                <div class="saturday">土曜</div>
-            </div>
-            <div class="dates" id="dates"></div>
-        </div>
+			<div class="header">
+				<button id="prev">Prev</button>
+				<div id="currentMonthYear" style="font-size: 24px;"></div>
+				<button id="next">Next</button>
+			</div>
+			<button id="toggleHolidays" style="margin: 10px;">Toggle Holidays</button>
+			<div class="days">
+				<div class="sunday">Sunday</div>
+				<div>Monday</div>
+				<div>Tuesday</div>
+				<div>Wednesday</div>
+				<div>Thursday</div>
+				<div>Friday</div>
+				<div class="saturday">Saturday</div>
+			</div>
+			<div class="dates" id="dates"></div>
+		</div>
+
+		<!-- Note modal -->
+		<div class="modal" id="noteModal">
+			<div class="modal-content">
+				<h2>Add/Edit Note</h2>
+				<input type="text" id="noteTitle" placeholder="Title">
+				<textarea id="noteContent" placeholder="Details"></textarea>
+				<button id="saveNote">Save</button>
+				<button id="closeModal">Close</button>
+			</div>
+		</div>
 
         <!-- Timetable Section -->
         <div class="timetable-container">
@@ -305,69 +349,145 @@
 
     <script>
         // カレンダー関連のJavaScript
-        const currentMonthYear = document.getElementById('currentMonthYear');
-        const datesContainer = document.getElementById('dates');
-        const prevButton = document.getElementById('prev');
-        const nextButton = document.getElementById('next');
-        const toggleHolidaysButton = document.getElementById('toggleHolidays');
-        let currentDate = new Date();
-        let showHolidays = false;
+        // Get holidays for a given year (excluding equinox days)
+		function getHolidays(year) {
+			return {
+				[`${year}-01-01`]: 'New Year\'s Day',
+				//[`${year}-01-08`]: 'Coming of Age Day',1月第2月曜
+				[`${year}-02-11`]: 'National Foundation Day',
+				[`${year}-02-23`]: 'Emperor\'s Birthday',
+				[`${year}-04-29`]: 'Showa Day',
+				[`${year}-05-03`]: 'Constitution Memorial Day',
+				[`${year}-05-04`]: 'Greenery Day',
+				[`${year}-05-05`]: 'Children\'s Day',
+				//[`${year}-07-15`]: 'Marine Day',7月第3月曜
+				[`${year}-08-11`]: 'Mountain Day',
+				//[`${year}-09-16`]: 'Respect for the Aged Day',9月第3月曜
+				//[`${year}-10-14`]: 'Sports Day',10月第2月曜
+				[`${year}-11-03`]: 'Culture Day',
+				[`${year}-11-23`]: 'Labor Thanksgiving Day',
+			   
+			};
+		}
 
-        const holidays = {
-            "2024-01-01": "元日",
-            "2024-02-11": "建国記念の日",
-            // 他の祝日をここに追加できます...
-        };
+		// Initialize holidays for the current and next few years
+		let today = new Date();
+		let currentYear = today.getFullYear();
+		let holidays = getHolidays(currentYear);
+		for (let i = 1; i <= 5; i++) {
+			Object.assign(holidays, getHolidays(currentYear + i));
+		}
 
-        function updateCalendar() {
-            const year = currentDate.getFullYear();
-            const month = currentDate.getMonth();
-            currentMonthYear.textContent = `${year}年 ${month + 1}月`;
-            const firstDay = new Date(year, month, 1).getDay();
-            const lastDate = new Date(year, month + 1, 0).getDate();
-            datesContainer.innerHTML = '';
+		let currentMonth = today.getMonth();
+		let showHolidays = true;
+		let selectedDate = ''; // Selected date for note editing
 
-            for (let i = 0; i < firstDay; i++) {
-                const emptyCell = document.createElement('div');
-                datesContainer.appendChild(emptyCell);
-            }
+		function updateCalendar(year, month) {
+			const monthNames = ["January", "February", "March", "April", "May", "June",
+								"July", "August", "September", "October", "November", "December"];
+			const firstDay = new Date(year, month, 1).getDay();
+			const daysInMonth = new Date(year, month + 1, 0).getDate();
 
-            for (let date = 1; date <= lastDate; date++) {
-                const dateButton = document.createElement('button');
-                const formattedDate = `${year}-${String(month + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-                dateButton.textContent = date;
+			document.getElementById('currentMonthYear').innerText = `${monthNames[month]} ${year}`;
 
-                if (new Date(year, month, date).getDay() === 0) {
-                    dateButton.classList.add('sunday');
-                } else if (new Date(year, month, date).getDay() === 6) {
-                    dateButton.classList.add('saturday');
-                }
+			const datesContainer = document.getElementById('dates');
+			datesContainer.innerHTML = '';
 
-                if (showHolidays && holidays[formattedDate]) {
-                    dateButton.classList.add('holiday');
-                    dateButton.textContent += ` (${holidays[formattedDate]})`;
-                }
+			for (let i = 0; i < firstDay; i++) {
+				const emptyCell = document.createElement('div');
+				datesContainer.appendChild(emptyCell);
+			}
 
-                datesContainer.appendChild(dateButton);
-            }
-        }
+			for (let day = 1; day <= daysInMonth; day++) {
+				const dateButton = document.createElement('button');
+				const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+				dateButton.innerText = day;
 
-        prevButton.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() - 1);
-            updateCalendar();
-        });
+				if (showHolidays && holidays[dateStr]) {
+					dateButton.innerText += ` (${holidays[dateStr]})`;
+					dateButton.classList.add('holiday');
+				}
 
-        nextButton.addEventListener('click', () => {
-            currentDate.setMonth(currentDate.getMonth() + 1);
-            updateCalendar();
-        });
+				const dayOfWeek = new Date(year, month, day).getDay();
+				if (dayOfWeek === 0) {
+					dateButton.classList.add('sunday');
+				} else if (dayOfWeek === 6) {
+					dateButton.classList.add('saturday');
+				}
 
-        toggleHolidaysButton.addEventListener('click', () => {
-            showHolidays = !showHolidays;
-            updateCalendar();
-        });
+				if (year === today.getFullYear() && month === today.getMonth() && day === today.getDate()) {
+					dateButton.classList.add('today');
+				}
 
-        updateCalendar();
+				// Display saved note title
+				const savedNote = localStorage.getItem(`${dateStr}-title`);
+				if (savedNote) {
+					const titleDiv = document.createElement('div');
+					titleDiv.style.fontWeight = 'bold';
+					titleDiv.style.marginTop = '5px';
+					titleDiv.innerText = savedNote;
+					dateButton.appendChild(titleDiv);
+				}
+
+				dateButton.addEventListener('click', () => openNoteModal(dateStr));
+
+				datesContainer.appendChild(dateButton);
+			}
+		}
+
+		document.getElementById('prev').addEventListener('click', () => {
+			currentMonth--;
+			if (currentMonth < 0) {
+				currentMonth = 11;
+				currentYear--;
+				holidays = getHolidays(currentYear);
+				for (let i = 1; i <= 5; i++) {
+					Object.assign(holidays, getHolidays(currentYear + i));
+				}
+			}
+			updateCalendar(currentYear, currentMonth);
+		});
+
+		document.getElementById('next').addEventListener('click', () => {
+			currentMonth++;
+			if (currentMonth > 11) {
+				currentMonth = 0;
+				currentYear++;
+				holidays = getHolidays(currentYear);
+				for (let i = 1; i <= 5; i++) {
+					Object.assign(holidays, getHolidays(currentYear + i));
+				}
+			}
+			updateCalendar(currentYear, currentMonth);
+		});
+
+		document.getElementById('toggleHolidays').addEventListener('click', () => {
+			showHolidays = !showHolidays;
+			updateCalendar(currentYear, currentMonth);
+		});
+
+		function openNoteModal(dateStr) {
+			selectedDate = dateStr;
+			document.getElementById('noteTitle').value = localStorage.getItem(`${dateStr}-title`) || '';
+			document.getElementById('noteContent').value = localStorage.getItem(`${dateStr}-content`) || '';
+			document.getElementById('noteModal').style.display = 'flex';
+		}
+
+		document.getElementById('saveNote').addEventListener('click', () => {
+			const title = document.getElementById('noteTitle').value;
+			const content = document.getElementById('noteContent').value;
+			localStorage.setItem(`${selectedDate}-title`, title);
+			localStorage.setItem(`${selectedDate}-content`, content);
+			updateCalendar(currentYear, currentMonth);
+			document.getElementById('noteModal').style.display = 'none';
+		});
+
+		document.getElementById('closeModal').addEventListener('click', () => {
+			document.getElementById('noteModal').style.display = 'none';
+		});
+
+		// Initial calendar update
+		updateCalendar(currentYear, currentMonth);
 
         // 時間割関連のJavaScript
         const timetable = document.getElementById('timetable');
@@ -455,4 +575,3 @@
     </script>
 </body>
 </html>
-
