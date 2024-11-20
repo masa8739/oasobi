@@ -258,43 +258,43 @@
             </tr>
             <tr>
                 <th>1限</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td data-key = "月1"></td>
+                <td data-key = "火1"></td>
+                <td data-key = "水1"></td>
+                <td data-key = "木1"></td>
+                <td data-key = "金1"></td>
             </tr>
             <tr>
-                <th>2限</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+				<th>2限</th>
+                <td data-key = "月2"></td>
+                <td data-key = "火2"></td>
+				<td data-key = "水2"></td>
+				<td data-key = "木2"></td>
+                <td data-key = "金2"></td>
             </tr>
             <tr>
                 <th>3限</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td data-key = "月3"></td>
+                <td data-key = "火3"></td>
+                <td data-key = "水3"></td>
+                <td data-key = "木3"></td>
+                <td data-key = "金3"></td>
             </tr>
             <tr>
                 <th>4限</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td data-key = "月4"></td>
+                <td data-key = "火4"></td>
+                <td data-key = "水4"></td>
+                <td data-key = "木4"></td>
+                <td data-key = "金4"></td>
             </tr>
             <tr>
                 <th>5限</th>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
-                <td></td>
+                <td data-key = "月5"></td>
+                <td data-key = "火5"></td>
+                <td data-key = "水5"></td>
+                <td data-key = "木5"></td>
+                <td data-key = "金5"></td>
             </tr>
         </table>
         <button class="button" id="addClassButton">講義を追加</button>
@@ -543,6 +543,7 @@
             const confirmAddClassButton = document.getElementById('confirmAddClassButton');
             const confirmDeleteClassButton = document.getElementById('confirmDeleteClassButton');
             const memo = document.getElementById('memo');
+			
 
             // ローカルストレージからデータを読み込み
             function loadFromLocalStorage() {
@@ -581,7 +582,8 @@
                 const period = document.getElementById('period').value;
 
                 if (className && weekday && period) {
-                    const cell = timetable.querySelector(`td[data-key='${weekday}${period.charAt(0)}']`);
+                    const key = `${weekday.charAt(0)}${period.charAt(0)}`; // e.g., "月1"
+					const cell = timetable.querySelector(`td[data-key='${key}']`);
                     if (cell) {
                         cell.innerHTML = `<a href="${classUrl}" target="_blank">${className}</a>`;
                         saveToLocalStorage();
@@ -594,10 +596,12 @@
             confirmDeleteClassButton.addEventListener('click', () => {
                 const weekday = document.getElementById('deleteClassWeekday').value;
                 const period = document.getElementById('deleteClassPeriod').value;
-
-                const cell = timetable.querySelector(`td[data-key='${weekday}${period.charAt(0)}']`);
+				
+				const cellKey = `${weekday.charAt(0)}${period.charAt(0)}`;
+                const cell = timetable.querySelector(`td[data-key='${cellKey}']`);
                 if (cell) {
                     cell.innerHTML = '';
+					localStorage.removeItem(cellKey);
                     saveToLocalStorage();
                 }
                 deleteClassModal.style.display = 'none';
