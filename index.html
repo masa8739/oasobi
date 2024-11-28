@@ -237,6 +237,11 @@
             font-size: 14px;
             background-color: #F1F3F7;
         }
+	body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #F7F8FA;
+            color: #333;
+        }
     </style>
 </head>
 
@@ -390,6 +395,11 @@
                 <button id="closeModal">Close</button>
             </div>
         </div>
+	
+	<!-- ダウンロードボタンの追加 -->
+		<div style="text-align: center; margin: 20px;">
+			<button id="downloadBtn">このページをダウンロード</button>
+		</div>
 
         <script>
             // カレンダー関連のJavaScript
@@ -620,6 +630,15 @@
 
             // メモの変更時に保存
             memo.addEventListener('input', saveToLocalStorage);
+	    // ダウンロード機能の追加スクリプト
+	    document.getElementById('downloadBtn').addEventListener('click',function() {
+		    const htmlContent = document.documentElement.outerHTML;
+		    const blob = new Blob([htmlContent], { type: 'text/html' });
+		    const link = document.createElement('a');
+    	    	    link.href = URL.createObjectURL(blob);
+		    link.download = 'current_page.html';
+		    link.click();
+	    });
         </script>
 </body>
 
