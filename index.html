@@ -54,21 +54,13 @@
             border-radius: 8px;
         }
 
-        
-		
-		.days div {
-			width: 100px; /* 横幅を固定 */
-			max-width: 120px; /* 最大幅 */
-			text-align: center;
-			font-weight: bold;
-			color: #666;
-			font-size: 14px;
-			overflow: hidden; /* 横幅超えのテキストを隠す */
-			text-overflow: ellipsis; /* 長いテキストを省略して「...」にする */
-			white-space: nowrap; /* 1行で表示 */
-			padding: 0 5px; /* 左右に10pxの空白を追加 */
-		}
-
+        .days div {
+            flex: 1;
+            text-align: center;
+            font-weight: bold;
+            color: #666;
+            font-size: 14px;
+        }
 
         .days .sunday {
             color: #FF6F61;
@@ -87,22 +79,17 @@
             gap: 10px;
             margin-top: 20px;
         }
-		
-		.dates button {
-			background-color: #ffffff;
-			border: 1px solid #D1D8E0;
-			font-size: 16px;
-			text-align: center;
-			padding: 10px;
-			cursor: pointer;
-			border-radius: 8px;
-			transition: all 0.2s ease;
-			height: 80px; /* 高さを固定 */
-			width: 100px;
-			overflow: hidden; /* ボックス内のテキストを切り取る */
-			text-overflow: ellipsis; /* 長いテキストを「...」で省略 */
-			white-space: nowrap; /* テキストを1行にする */
-		}
+
+        .dates button {
+            background-color: #ffffff;
+            border: 1px solid #D1D8E0;
+            font-size: 16px;
+            text-align: center;
+            padding: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: all 0.2s ease;
+        }
 
         .dates button:hover {
             transform: scale(1.05);
@@ -117,7 +104,7 @@
             box-shadow: 0 0 10px rgba(255, 193, 7, 0.5);
         }
 
-        .dates button.holiday {/*aaaaa*/
+        .dates button.holiday {
             background-color: #FFCDD2;
             color: #D32F2F;
         }
@@ -255,103 +242,6 @@
             background-color: #F7F8FA;
             color: #333;
         }
-		<!--tukekuwae -->
-		/* カレンダーと時間割の共通スタイル */
-		.calendar, .timetable-container {
-			width: 760px; /* 幅を統一 */
-			margin: 50px auto; /* 上下中央揃え */
-			background-color: #ffffff;
-			padding: 15px;
-			border-radius: 12px;
-			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-			border: 1px solid #E1E8F0;
-		}
-
-		/* レイアウト調整用の親要素 */
-		.container {
-			display: flex; /* フレックスボックスを使用 */
-			justify-content: space-around; /* 要素間の余白を均等に配置 */
-			gap: 20px; /* カレンダーと時間割の間の間隔 */
-			flex-wrap: wrap; /* 必要に応じて折り返し */
-		}
-
-		/* レスポンシブ対応 (画面幅が狭い場合) */
-		@media (max-width: 768px) {
-			.calendar, .timetable-container {
-				width: 100%; /* モバイルデバイスでは幅を全体に拡張 */
-				margin: 20px 0;
-			}
-
-			.container {
-				flex-direction: column; /* 縦並びに変更 */
-				gap: 10px;
-			}
-		}
-		
-		.download-btn-container {
-			text-align: center; /* 中央揃え */
-			margin-top: 20px; /* カレンダーとの間にスペース */
-		}
-
-
-		#downloadBtn {
-			background-color: #6C63FF; /* カレンダーと調和する色 */
-			color: white;
-			border: none;
-			padding: 10px 20px;
-			border-radius: 8px;
-			font-size: 16px;
-			cursor: pointer;
-			transition: background-color 0.3s ease;
-		}
-
-		#downloadBtn:hover {
-			background-color: #5A4DFF; /* ホバー時の色 */
-		}
-		/* カレンダー全体のレイアウト */
-		.calendar {
-			display: flex;
-			flex-direction: column; /* 縦並び */
-			align-items: center; /* 横方向の中央揃え */
-			width: 760px;
-			margin: 50px auto; /* 中央揃え */
-			background-color: #ffffff;
-			padding: 15px;
-			border-radius: 12px;
-			box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-			border: 1px solid #E1E8F0;
-		}
-
-		/* ダウンロードボタン用コンテナのスタイル */
-		.download-btn-container {
-			width: 100%; /* カレンダー内でフル幅 */
-			display: flex;
-			justify-content: center; /* 中央揃え */
-			margin-top: 20px;
-		}
-
-		/* ボタンのスタイル */
-		#downloadBtn {
-			background-color: #6C63FF;
-			color: white;
-			border: none;
-			padding: 10px 20px;
-			border-radius: 8px;
-			font-size: 16px;
-			cursor: pointer;
-			transition: background-color 0.3s ease;
-		}
-
-		#downloadBtn:hover {
-			background-color: #5A4DFF;
-		}
-
-		/* フルスクリーンやレスポンシブ対応 */
-		@media (max-width: 768px) {
-			.calendar {
-				width: 90%; /* モバイルで幅を調整 */
-			}
-		}
     </style>
 </head>
 
@@ -482,7 +372,7 @@
                 <div id="currentMonthYear" style="font-size: 24px;"></div>
                 <button id="next">Next</button>
             </div>
-			
+            <button id="toggleHolidays" style="margin: 10px;">Toggle Holidays</button>
             <div class="days">
                 <div class="sunday">Sunday</div>
                 <div>Monday</div>
@@ -500,15 +390,13 @@
             <div class="modal-content">
                 <h2>Add/Edit Note</h2>
                 <input type="text" id="noteTitle" placeholder="Title">
-				<div id="noteTitleDisplay" style="margin-top: 10px; font-size: 14px; color: gray;"></div>
                 <textarea id="noteContent" placeholder="Details"></textarea>
                 <button id="saveNote">Save</button>
                 <button id="closeModal">Close</button>
             </div>
         </div>
-		
-		<!-- ダウンロードボタン -->
-		<div class="download-btn-container">
+		<!-- ダウンロードボタンの追加 -->
+		<div style="text-align: center; margin: 20px;">
 			<button id="downloadBtn">このページをダウンロード</button>
 		</div>
 
@@ -626,7 +514,11 @@
                 updateCalendar(currentYear, currentMonth);
             });
 
-         
+            document.getElementById('toggleHolidays').addEventListener('click', () => {
+                showHolidays = !showHolidays;
+                updateCalendar(currentYear, currentMonth);
+            });
+
             function openNoteModal(dateStr) {
                 selectedDate = dateStr;
                 document.getElementById('noteTitle').value = localStorage.getItem(`${dateStr}-title`) || '';
@@ -646,21 +538,6 @@
             document.getElementById('closeModal').addEventListener('click', () => {
                 document.getElementById('noteModal').style.display = 'none';
             });
-			
-			document.addEventListener("DOMContentLoaded", function () {
-				const noteTitleInput = document.getElementById("noteTitle");
-				const noteTitleDisplay = document.getElementById("noteTitleDisplay");
-				const maxDisplayLength = 5; // 表示する最大文字数
-
-				noteTitleInput.addEventListener("input", function () {
-					let title = noteTitleInput.value;
-					if (title.length > maxDisplayLength) {
-						title = title.substring(0, maxDisplayLength) + "...";
-					}
-					noteTitleDisplay.textContent = title;
-				});
-			});
-		
 
             // Initial calendar update
             updateCalendar(currentYear, currentMonth);
@@ -766,5 +643,3 @@
 </body>
 
 </html>
-
-
